@@ -233,7 +233,7 @@ const App = () => {
           style={{ cursor: 'pointer' }}
         >
           <div className="animate-float">
-            <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-wider drop-shadow-lg">
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 tracking-wider drop-shadow-lg">
               Welcome to My Library
             </h1>
             
