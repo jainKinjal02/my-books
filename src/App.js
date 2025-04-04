@@ -607,11 +607,11 @@ const StatCard = ({ icon, title, value, color }) => {
   const VisualBookCard = ({ book }) => {
     // Map of book covers - in a real app, you'd store these with your book data
     const bookCovers = {
-      'The Great Gatsby': '/images/gatsby-cover.jpg',
-      'To Kill a Mockingbird': '/images/mockingbird-cover.jpg',
-      '1984': '/images/1984-cover.jpg',
-      'Pride and Prejudice': '/images/pride-cover.jpg',
-      'The Hobbit': '/images/hobbit-cover.jpg',
+      'The Great Gatsby': '/images/books/theGreatGatsby.png',
+      'To Kill a Mockingbird': '/images/books/mockingBird.png',
+      '1984': '/images/books/1984.png',
+      'Pride and Prejudice': '/images/books/pride&Prejudice.png',
+      'The Hobbit': '/images/books/TheHobbit.png',
       // Add default cover as fallback
       'default': '/images/bg-photo.jpg'
     };
