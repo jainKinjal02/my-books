@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { BookOpen, Book, Clock, Check, Award, Search, Heart, PlusCircle, ChevronDown, ChevronUp } from 'lucide-react';
 
 const App = () => {
@@ -22,7 +22,7 @@ const App = () => {
     toRead: 0,
     favoriteGenre: '',
   });
-  
+  const [pageTransitioning, setPageTransitioning] = useState(false);
   // UI State
   const [activeTab, setActiveTab] = useState('library');
   const [search, setSearch] = useState('');
@@ -78,6 +78,13 @@ const App = () => {
       setShowAddForm(false);
     }
   };
+  const handleViewChange = (newView) => {
+    setPageTransitioning(true);
+    setTimeout(() => {
+      setView(newView);
+      setPageTransitioning(false);
+    }, 500);
+  };
   
   // Filter and sort books
   const filteredBooks = books
@@ -132,83 +139,123 @@ const App = () => {
       </div>
     );
   };
+
+// Add this component
+const AnimatedRatingStars = ({ rating }) => {
+  return (
+    <div className="flex">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <span 
+          key={star} 
+          className={`text-xl star-animation ${star <= rating ? 'text-yellow-400' : 'text-gray-300'}`}
+          style={{ '--star-index': star }}
+        >
+          ★
+        </span>
+      ))}
+    </div>
+  );
+};
   
   // Book card with animation
-  const BookCard = ({ book }) => {
-    const [expanded, setExpanded] = useState(false);
-    
-    return (
-      <div 
-        className="bg-white rounded-lg overflow-hidden shadow-lg mb-4 transition-all duration-300 hover:shadow-xl"
-        style={{ 
-          transform: expanded ? 'scale(1.02)' : 'scale(1)',
-          borderLeft: `4px solid ${genreColors[book.genre] || '#ccc'}`
-        }}
-      >
-        <div className="p-4">
-          <div className="flex justify-between items-start">
-            <div>
-              <h3 className="text-xl font-bold mb-1">{book.title}</h3>
-              <p className="text-gray-700 mb-2">by {book.author}</p>
-              <div className="flex items-center mb-2">
-                <span className="inline-block bg-blue-100 text-blue-800 rounded-full px-3 py-1 text-sm font-semibold mr-2">
-                  {book.genre}
-                </span>
-                <span className={`inline-block rounded-full px-3 py-1 text-sm font-semibold ${
-                  book.status === 'Read' ? 'bg-green-100 text-green-800' : 
-                  book.status === 'Reading' ? 'bg-yellow-100 text-yellow-800' : 
-                  'bg-purple-100 text-purple-800'
-                }`}>
-                  {book.status}
-                </span>
-              </div>
-              {book.status === 'Read' && <RatingStars rating={book.rating} />}
+// Replace your BookCard component with this enhanced version
+const BookCard = ({ book }) => {
+  const [expanded, setExpanded] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
+  
+  return (
+    <div 
+      className="book-card bg-white rounded-lg overflow-hidden shadow-lg mb-4 transition-all duration-500"
+      style={{ 
+        transform: expanded ? 'scale(1.02)' : isHovering ? 'translateY(-8px)' : 'scale(1)',
+        borderLeft: `4px solid ${genreColors[book.genre] || '#ccc'}`,
+        boxShadow: isHovering ? '0 15px 30px rgba(0,0,0,0.1)' : '',
+      }}
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+    >
+      <div className="corner-fold p-4">
+        <div className="flex justify-between items-start">
+          <div>
+            <h3 className="text-xl font-bold mb-1">{book.title}</h3>
+            <p className="text-gray-700 mb-2">by {book.author}</p>
+            <div className="flex items-center mb-2">
+              <span className="inline-block bg-blue-100 text-blue-800 rounded-full px-3 py-1 text-sm font-semibold mr-2">
+                {book.genre}
+              </span>
+              <span className={`inline-block rounded-full px-3 py-1 text-sm font-semibold ${
+                book.status === 'Read' ? 'bg-green-100 text-green-800' : 
+                book.status === 'Reading' ? 'bg-yellow-100 text-yellow-800' : 
+                'bg-purple-100 text-purple-800'
+              }`}>
+                {book.status}
+              </span>
             </div>
-            <button 
-              onClick={() => setExpanded(!expanded)}
-              className="p-1 rounded-full hover:bg-gray-100"
-            >
-              {expanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-            </button>
+            {book.status === 'Read' && <AnimatedRatingStars rating={book.rating} />}
           </div>
-          
-          {expanded && (
-            <div className="mt-3 pt-3 border-t border-gray-200 animate-fadeIn">
-              <p className="text-gray-600 mb-2"><span className="font-semibold">Pages:</span> {book.pages}</p>
-              {book.notes && <p className="text-gray-600"><span className="font-semibold">Notes:</span> {book.notes}</p>}
-              <div className="mt-3 flex space-x-2">
-                <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md text-sm transition">
-                  Edit
-                </button>
-                <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm transition">
-                  Delete
-                </button>
-              </div>
-            </div>
-          )}
+          <button 
+            onClick={() => setExpanded(!expanded)}
+            className="p-1 rounded-full hover:bg-gray-100"
+          >
+            {expanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+          </button>
         </div>
+        
+        {expanded && (
+          <div className="mt-3 pt-3 border-t border-gray-200 animate-fadeIn">
+            <p className="text-gray-600 mb-2"><span className="font-semibold">Pages:</span> {book.pages}</p>
+            {book.notes && <p className="text-gray-600"><span className="font-semibold">Notes:</span> {book.notes}</p>}
+            <div className="mt-3 flex space-x-2">
+              <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md text-sm transition">
+                Edit
+              </button>
+              <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm transition">
+                Delete
+              </button>
+            </div>
+          </div>
+        )}
       </div>
-    );
-  };
+    </div>
+  );
+};
   
   // Stats card with animation
-  const StatCard = ({ icon, title, value, color }) => {
-    return (
-      <div className="bg-white rounded-lg p-4 shadow-md flex items-center space-x-4 overflow-hidden relative">
-        <div className={`p-3 rounded-full ${color}`}>
-          {icon}
-        </div>
-        <div>
-          <p className="text-gray-600 text-sm">{title}</p>
-          <p className="text-2xl font-bold">{value}</p>
-        </div>
-        <div className="absolute -right-6 -bottom-6 opacity-10">
-          {React.cloneElement(icon, { size: 80 })}
-        </div>
-      </div>
-    );
-  };
+// Enhanced StatCard component
+const StatCard = ({ icon, title, value, color }) => {
+  const [isHovering, setIsHovering] = useState(false);
   
+  return (
+    <div 
+      className="bg-white rounded-lg p-4 shadow-md flex items-center space-x-4 overflow-hidden relative transition-all duration-300"
+      style={{
+        transform: isHovering ? 'translateY(-5px)' : 'translateY(0)',
+        boxShadow: isHovering ? '0 10px 25px rgba(0,0,0,0.1)' : ''
+      }}
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+    >
+      <div className={`p-3 rounded-full ${color} transition-all duration-300`} style={{
+        transform: isHovering ? 'scale(1.1)' : 'scale(1)'
+      }}>
+        {icon}
+      </div>
+      <div>
+        <p className="text-gray-600 text-sm">{title}</p>
+        <p className="text-2xl font-bold">{value}</p>
+      </div>
+      <div 
+        className="absolute -right-6 -bottom-6 opacity-10 transition-all duration-300" 
+        style={{ 
+          opacity: isHovering ? '0.2' : '0.1',
+          transform: isHovering ? 'scale(1.2)' : 'scale(1)'
+        }}
+      >
+        {React.cloneElement(icon, { size: 80 })}
+      </div>
+    </div>
+  );
+};
   // Landing Page Component with animated background carousel
   const LandingPage = () => {
     // State for background image carousel
@@ -284,7 +331,7 @@ const App = () => {
           }`}
           onMouseEnter={() => setLandingHover(true)}
           onMouseLeave={() => setLandingHover(false)}
-          onClick={() => setView('dashboard')}
+          onClick={() => handleViewChange('dashboard')}
           style={{ cursor: 'pointer' }}
         >
           <div className="animate-float relative p-10">
@@ -330,26 +377,42 @@ const App = () => {
                 <BookOpen size={32} className="mr-2" />
                 <h1 className="text-2xl font-bold">My Reading Journey</h1>
               </div>
-              <nav>
-                <ul className="flex space-x-6">
-                  <li>
-                    <button 
-                      onClick={() => setActiveTab('library')}
-                      className={`py-2 px-1 border-b-2 transition-colors ${activeTab === 'library' ? 'border-white' : 'border-transparent hover:border-white/50'}`}
-                    >
-                      <Book className="inline mr-1" size={18} /> Library
-                    </button>
-                  </li>
-                  <li>
-                    <button 
-                      onClick={() => setActiveTab('stats')}
-                      className={`py-2 px-1 border-b-2 transition-colors ${activeTab === 'stats' ? 'border-white' : 'border-transparent hover:border-white/50'}`}
-                    >
-                      <Chart className="inline mr-1" size={18} /> Statistics
-                    </button>
-                  </li>
-                </ul>
-              </nav>
+<nav>
+  <ul className="flex space-x-6">
+    <li>
+      <button 
+        onClick={() => {
+          setActiveTab('library');
+        }}
+        className={`py-2 px-1 border-b-2 transition-all duration-300 ${
+          activeTab === 'library' 
+            ? 'border-white translate-y-0' 
+            : 'border-transparent hover:border-white/50 hover:-translate-y-1'
+        }`}
+      >
+        <Book className={`inline mr-1 transition-transform duration-300 ${
+          activeTab === 'library' ? 'rotate-0' : 'rotate-[-15deg]'
+        }`} size={18} /> Library
+      </button>
+    </li>
+    <li>
+      <button 
+        onClick={() => {
+          setActiveTab('stats');
+        }}
+        className={`py-2 px-1 border-b-2 transition-all duration-300 ${
+          activeTab === 'stats' 
+            ? 'border-white translate-y-0' 
+            : 'border-transparent hover:border-white/50 hover:-translate-y-1'
+        }`}
+      >
+        <Chart className={`inline mr-1 transition-transform duration-300 ${
+          activeTab === 'stats' ? 'rotate-0' : 'rotate-[-15deg]'
+        }`} size={18} /> Statistics
+      </button>
+    </li>
+  </ul>
+</nav>
             </div>
           </div>
         </header>
