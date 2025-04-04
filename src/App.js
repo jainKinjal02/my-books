@@ -27,7 +27,16 @@ const App = () => {
   const [activeTab, setActiveTab] = useState('library');
   const [search, setSearch] = useState('');
   const [showAddForm, setShowAddForm] = useState(false);
-  const [newBook, setNewBook] = useState({ title: '', author: '', genre: '', status: 'To Read', rating: 0, pages: 0, notes: '' });
+  const [newBook, setNewBook] = useState({ 
+    title: '', 
+    author: '', 
+    genre: '', 
+    status: 'To Read', 
+    rating: 0, 
+    pages: 0, 
+    notes: '',
+    coverUrl: '' 
+  });
   const [filterStatus, setFilterStatus] = useState('All');
   const [sortBy, setSortBy] = useState('title');
   const [isAscending, setIsAscending] = useState(true);
@@ -367,348 +376,306 @@ const StatCard = ({ icon, title, value, color }) => {
   
   // Main Dashboard (original app)
   const Dashboard = () => {
+    const bgImage = "/images/rey-seven-_nm_mZ4Cs2I-unsplash.jpg";
     return (
-      <div className="min-h-screen bg-gray-100 flex flex-col">
-                <div 
-          className="fixed inset-0 z-0 bg-cover bg-center opacity-10"
-          style={{ 
-            backgroundImage: "url('/images/rey-seven-_nm_mZ4Cs2I-unsplash.jpg')"
-          }}
-        ></div>
-        {/* Header/Nav */}
-        <header className="bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg">
-          <div className="container mx-auto py-4 px-6">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center">
-                <BookOpen size={32} className="mr-2" />
-                <h1 className="text-2xl font-bold">My Reading Journey</h1>
-              </div>
+      <div className="min-h-screen flex flex-col" 
+      style={{ 
+        backgroundImage: `url('${bgImage}')`, 
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
+      }}>
+             <header className="backdrop-blur-md bg-black/30 text-white shadow-lg sticky top-0 z-50">
+        <div className="container mx-auto py-4 px-6">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center">
+              <button 
+                onClick={() => handleViewChange('landing')} 
+                className="mr-3 p-2 rounded-full hover:bg-white/10 transition-all duration-300"
+                title="Back to welcome page"
+              >
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  width="20" 
+                  height="20" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  className="transition-transform duration-300 hover:-translate-x-1"
+                >
+                  <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+              </button>
+              <h1 className="text-3xl font-bold font-playfair">My Reading Journey</h1>
             </div>
           </div>
-        </header>
-        
-        {/* Background Image - Positioned with opacity */}
-
-        
-        {/* Main Content */}
-        <main className="flex-grow container mx-auto p-6 z-10">
-          {activeTab === 'library' && (
-            <div className="space-y-6">
-              {/* Top Controls */}
-              <div className="flex flex-wrap justify-between items-center gap-4">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                  <input
-                    type="text"
-                    placeholder="Search books..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                  />
-                </div>
-                
-                <div className="flex space-x-4">
-                  <select 
-                    value={filterStatus}
-                    onChange={(e) => setFilterStatus(e.target.value)}
-                    className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="All">All Books</option>
-                    <option value="Read">Read</option>
-                    <option value="Reading">Currently Reading</option>
-                    <option value="To Read">To Read</option>
-                  </select>
-                  
-                  <select 
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="title">Sort by Title</option>
-                    <option value="author">Sort by Author</option>
-                    <option value="genre">Sort by Genre</option>
-                    <option value="rating">Sort by Rating</option>
-                  </select>
-                  
-                  <button 
-                    onClick={() => setIsAscending(!isAscending)}
-                    className="px-4 py-2 bg-white rounded-lg border border-gray-300 hover:bg-gray-50"
-                  >
-                    {isAscending ? "↑ Asc" : "↓ Desc"}
-                  </button>
-                  
-                  <button
-                    onClick={() => setShowAddForm(true)}
-                    className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                  >
-                    <PlusCircle size={18} className="mr-1" /> Add Book
-                  </button>
-                </div>
-              </div>
-              
-              {/* Add Book Form */}
-              {showAddForm && (
-                <div className="bg-white p-6 rounded-lg shadow-lg animate-fadeIn">
-                  <h2 className="text-xl font-bold mb-4">Add New Book</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div>
-                      <label className="block text-gray-700 mb-2">Title *</label>
-                      <input
-                        type="text"
-                        value={newBook.title}
-                        onChange={(e) => setNewBook({...newBook, title: e.target.value})}
-                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Enter book title"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 mb-2">Author *</label>
-                      <input
-                        type="text"
-                        value={newBook.author}
-                        onChange={(e) => setNewBook({...newBook, author: e.target.value})}
-                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Enter author name"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 mb-2">Genre</label>
-                      <select
-                        value={newBook.genre}
-                        onChange={(e) => setNewBook({...newBook, genre: e.target.value})}
-                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      >
-                        <option value="">Select a genre</option>
-                        <option value="Classic">Classic</option>
-                        <option value="Fiction">Fiction</option>
-                        <option value="Fantasy">Fantasy</option>
-                        <option value="Sci-Fi">Sci-Fi</option>
-                        <option value="Mystery">Mystery</option>
-                        <option value="Romance">Romance</option>
-                        <option value="Biography">Biography</option>
-                        <option value="Dystopian">Dystopian</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 mb-2">Status</label>
-                      <select
-                        value={newBook.status}
-                        onChange={(e) => setNewBook({...newBook, status: e.target.value})}
-                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      >
-                        <option value="To Read">To Read</option>
-                        <option value="Reading">Currently Reading</option>
-                        <option value="Read">Read</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 mb-2">Pages</label>
-                      <input
-                        type="number"
-                        value={newBook.pages}
-                        onChange={(e) => setNewBook({...newBook, pages: parseInt(e.target.value) || 0})}
-                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Number of pages"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 mb-2">Rating (if read)</label>
-                      <select
-                        value={newBook.rating}
-                        onChange={(e) => setNewBook({...newBook, rating: parseInt(e.target.value)})}
-                        disabled={newBook.status !== 'Read'}
-                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      >
-                        <option value="0">Not rated</option>
-                        <option value="1">1 Star</option>
-                        <option value="2">2 Stars</option>
-                        <option value="3">3 Stars</option>
-                        <option value="4">4 Stars</option>
-                        <option value="5">5 Stars</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div className="mb-4">
-                    <label className="block text-gray-700 mb-2">Notes</label>
-                    <textarea
-                      value={newBook.notes}
-                      onChange={(e) => setNewBook({...newBook, notes: e.target.value})}
-                      className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="Add your thoughts about this book"
-                      rows="3"
-                    ></textarea>
-                  </div>
-                  <div className="flex justify-end space-x-3">
-                    <button
-                      onClick={() => setShowAddForm(false)}
-                      className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={handleAddBook}
-                      className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                    >
-                      Add Book
-                    </button>
-                  </div>
-                </div>
-              )}
-              
-              {/* Book List */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {filteredBooks.map((book) => (
-                  <BookCard key={book.id} book={book} />
-                ))}
-                
-                {filteredBooks.length === 0 && (
-                  <div className="col-span-2 text-center py-12">
-                    <p className="text-gray-500 text-lg">No books found. Try adjusting your filters or add a new book.</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
+        </div>
+      </header> 
+      
+      <main className="flex-grow container mx-auto p-6 z-10">
+        {/* Filters Row */}
+        <div className="flex flex-wrap gap-4 mb-8">
+          <div className="flex-1 min-w-[200px]">
+            <select 
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="w-full px-4 py-3 rounded-lg bg-black/30 backdrop-blur-md text-white border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50"
+            >
+              <option value="All">All Books</option>
+              <option value="Read">Read</option>
+              <option value="Reading">Currently Reading</option>
+              <option value="To Read">To Read</option>
+            </select>
+          </div>
           
-          {activeTab === 'stats' && (
-            <div className="space-y-6 animate-fadeIn">
-              <h2 className="text-2xl font-bold mb-6">Reading Statistics</h2>
-              
-              {/* Stats Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-                <StatCard 
-                  icon={<Book size={24} className="text-white" />}
-                  title="Books Read"
-                  value={statistics.booksRead}
-                  color="bg-blue-500"
-                />
-                <StatCard 
-                  icon={<Clock size={24} className="text-white" />}
-                  title="Currently Reading"
-                  value={statistics.currentlyReading}
-                  color="bg-yellow-500"
-                />
-                <StatCard 
-                  icon={<Check size={24} className="text-white" />}
-                  title="To Read"
-                  value={statistics.toRead}
-                  color="bg-purple-500"
-                />
-                <StatCard 
-                  icon={<Award size={24} className="text-white" />}
-                  title="Pages Read"
-                  value={statistics.pagesRead}
-                  color="bg-green-500"
-                />
-              </div>
-              
-              {/* Genre Distribution */}
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-bold">Genre Distribution</h3>
-                  <button 
-                    onClick={() => setShowGenreStats(!showGenreStats)}
-                    className="text-blue-500 hover:text-blue-600"
-                  >
-                    {showGenreStats ? 'Hide' : 'Show'} Details
-                  </button>
-                </div>
-                
-                <div className="relative pt-1">
-                  <div className="flex mb-2 h-4 overflow-hidden rounded-full">
-                    {Object.keys(genreStats).map((genre, index) => {
-                      const percentage = (genreStats[genre] / books.length) * 100;
-                      return (
-                        <div
-                          key={genre}
-                          style={{ 
-                            width: `${percentage}%`,
-                            backgroundColor: genreColors[genre] || '#ccc',
-                          }}
-                          className="transition-all duration-500"
-                          title={`${genre}: ${genreStats[genre]} books (${percentage.toFixed(1)}%)`}
-                        ></div>
-                      );
-                    })}
-                  </div>
-                </div>
-                
-                {showGenreStats && (
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4 animate-fadeIn">
-                    {Object.keys(genreStats).map(genre => (
-                      <div key={genre} className="flex items-center">
-                        <div
-                          className="w-4 h-4 rounded-full mr-2"
-                          style={{ backgroundColor: genreColors[genre] || '#ccc' }}
-                        ></div>
-                        <div>
-                          <span className="font-medium">{genre}:</span> {genreStats[genre]} books
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-              
-              {/* Reading Progress */}
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <h3 className="text-lg font-bold mb-4">Reading Progress</h3>
-                <div className="relative pt-1">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium">Goal: 20 books this year</span>
-                    <span className="text-sm font-medium">{statistics.booksRead}/20 ({(statistics.booksRead/20*100).toFixed(0)}%)</span>
-                  </div>
-                  <div className="flex h-3 bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                      style={{ width: `${Math.min(statistics.booksRead/20*100, 100)}%` }}
-                      className="bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-1000"
-                    ></div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Reading Habits */}
-              <div className="bg-white p-6 rounded-lg shadow-md">
-                <h3 className="text-lg font-bold mb-4">Reading Insights</h3>
-                <div className="space-y-4">
-                  <div className="bg-blue-50 p-4 rounded-md border-l-4 border-blue-500">
-                    <h4 className="font-bold text-blue-700">Favorite Genre</h4>
-                    <p className="text-blue-800">
-                      {statistics.favoriteGenre ? `You seem to enjoy ${statistics.favoriteGenre} books the most!` : 'Add more books to see your favorite genre'}
-                    </p>
-                  </div>
-                  <div className="bg-green-50 p-4 rounded-md border-l-4 border-green-500">
-                    <h4 className="font-bold text-green-700">Reading Pace</h4>
-                    <p className="text-green-800">
-                      {statistics.booksRead > 0 
-                        ? `You've read an average of ${Math.round(statistics.pagesRead / statistics.booksRead)} pages per book.`
-                        : 'Start reading to track your pace!'}
-                    </p>
-                  </div>
-                  <div className="bg-purple-50 p-4 rounded-md border-l-4 border-purple-500">
-                    <h4 className="font-bold text-purple-700">To Read List</h4>
-                    <p className="text-purple-800">
-                      {statistics.toRead > 0 
-                        ? `You have ${statistics.toRead} books waiting to be discovered.`
-                        : 'Your to-read list is empty. Time to add some new books!'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </main>
-        
-        {/* Footer */}
-        <footer className="bg-gray-800 text-white py-4">
-          <div className="container mx-auto px-6 text-center">
-            <p>My Reading Journey - Track your books and reading habits</p>
-            <div className="mt-2 flex justify-center space-x-4">
-              <Heart size={16} className="text-red-400" /> 
-              <span>Made with love for book enthusiasts</span>
+          <div className="flex-1 min-w-[200px]">
+            <select 
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="w-full px-4 py-3 rounded-lg bg-black/30 backdrop-blur-md text-white border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50"
+            >
+              <option value="title">Sort by Title</option>
+              <option value="author">Sort by Author</option>
+              <option value="genre">Sort by Genre</option>
+              <option value="rating">Sort by Rating</option>
+            </select>
+          </div>
+          
+          <div className="flex-1 min-w-[200px]">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/70" size={18} />
+              <input
+                type="text"
+                placeholder="Search by title..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 rounded-lg bg-black/30 backdrop-blur-md text-white border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50"
+              />
             </div>
           </div>
-        </footer>
+          
+          <button
+            onClick={() => setShowAddForm(true)}
+            className="px-6 py-3 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition-all shadow-lg hover:shadow-blue-500/30 flex items-center space-x-2"
+          >
+            <PlusCircle size={18} /> <span>Add Book</span>
+          </button>
+        </div>
+        
+        {/* Book Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredBooks.map((book) => (
+            <VisualBookCard key={book.id} book={book} />
+          ))}
+          
+          {filteredBooks.length === 0 && (
+            <div className="col-span-full text-center py-12 bg-black/30 backdrop-blur-md rounded-lg text-white">
+              <p className="text-white/80 text-lg">No books found. Try adjusting your filters or add a new book.</p>
+            </div>
+          )}
+        </div>
+      </main>
+      
+            {/* Add Book Modal */}
+            {showAddForm && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white p-8 rounded-lg shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto animate-fadeIn">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold">Add New Book</h2>
+              <button 
+                onClick={() => setShowAddForm(false)}
+                className="p-2 rounded-full hover:bg-gray-100"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 6L6 18M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
+            
+            {/* Add Book Form */}
+{/* Add Book Form */}
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+  <div>
+    <label className="block text-gray-700 mb-2">Title *</label>
+    <input
+      type="text"
+      value={newBook.title}
+      onChange={(e) => setNewBook({...newBook, title: e.target.value})}
+      className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      placeholder="Enter book title"
+    />
+  </div>
+  <div>
+    <label className="block text-gray-700 mb-2">Author *</label>
+    <input
+      type="text"
+      value={newBook.author}
+      onChange={(e) => setNewBook({...newBook, author: e.target.value})}
+      className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      placeholder="Enter author name"
+    />
+  </div>
+  <div>
+    <label className="block text-gray-700 mb-2">Cover Image URL</label>
+    <input
+      type="text"
+      value={newBook.coverUrl || ''}
+      onChange={(e) => setNewBook({...newBook, coverUrl: e.target.value})}
+      className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      placeholder="https://example.com/book-cover.jpg"
+    />
+  </div>
+  <div>
+    <label className="block text-gray-700 mb-2">Genre</label>
+    <select
+      value={newBook.genre}
+      onChange={(e) => setNewBook({...newBook, genre: e.target.value})}
+      className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+    >
+      <option value="">Select a genre</option>
+      <option value="Classic">Classic</option>
+      <option value="Fiction">Fiction</option>
+      <option value="Fantasy">Fantasy</option>
+      <option value="Sci-Fi">Sci-Fi</option>
+      <option value="Mystery">Mystery</option>
+      <option value="Romance">Romance</option>
+      <option value="Biography">Biography</option>
+      <option value="Dystopian">Dystopian</option>
+    </select>
+  </div>
+  <div>
+    <label className="block text-gray-700 mb-2">Status</label>
+    <select
+      value={newBook.status}
+      onChange={(e) => setNewBook({...newBook, status: e.target.value})}
+      className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+    >
+      <option value="To Read">To Read</option>
+      <option value="Reading">Currently Reading</option>
+      <option value="Read">Read</option>
+    </select>
+  </div>
+  <div>
+    <label className="block text-gray-700 mb-2">Pages</label>
+    <input
+      type="number"
+      value={newBook.pages}
+      onChange={(e) => setNewBook({...newBook, pages: parseInt(e.target.value) || 0})}
+      className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      placeholder="Number of pages"
+    />
+  </div>
+  <div>
+    <label className="block text-gray-700 mb-2">Rating (if read)</label>
+    <div className="flex items-center">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <button
+          key={star}
+          type="button"
+          onClick={() => setNewBook({...newBook, rating: star})}
+          className={`text-2xl focus:outline-none ${
+            star <= newBook.rating ? 'text-yellow-400' : 'text-gray-300'
+          }`}
+          disabled={newBook.status !== 'Read'}
+        >
+          ★
+        </button>
+      ))}
+    </div>
+  </div>
+</div>
+<div className="col-span-full mb-4">
+  <label className="block text-gray-700 mb-2">Notes</label>
+  <textarea
+    value={newBook.notes}
+    onChange={(e) => setNewBook({...newBook, notes: e.target.value})}
+    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+    placeholder="Add your thoughts about this book"
+    rows="3"
+  ></textarea>
+</div>
+          </div>
+        </div>
+      )}
+      </div>
+    );
+  };
+
+  const VisualBookCard = ({ book }) => {
+    // Map of book covers - in a real app, you'd store these with your book data
+    const bookCovers = {
+      'The Great Gatsby': '/images/gatsby-cover.jpg',
+      'To Kill a Mockingbird': '/images/mockingbird-cover.jpg',
+      '1984': '/images/1984-cover.jpg',
+      'Pride and Prejudice': '/images/pride-cover.jpg',
+      'The Hobbit': '/images/hobbit-cover.jpg',
+      // Add default cover as fallback
+      'default': '/images/bg-photo.jpg'
+    };
+    
+    // Get book cover or fallback to default
+    const coverImage = book.coverUrl || bookCovers[book.title] || bookCovers.default;
+    
+    return (
+      <div className="book-card rounded-lg overflow-hidden shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 relative group">
+        {/* Book Cover Image */}
+        <div className="relative aspect-[2/3] overflow-hidden">
+          <img 
+            src={coverImage} 
+            alt={book.title} 
+            className="object-cover w-full h-full"
+            onError={(e) => {
+              e.target.src = bookCovers.default;
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+        </div>
+        
+        {/* Book Info */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+          <h3 className="text-2xl font-bold mb-1 drop-shadow-lg">{book.title}</h3>
+          <p className="text-white/80 mb-2">by {book.author}</p>
+          
+          <div className="flex flex-wrap gap-2 mb-2">
+            <span className="inline-block bg-yellow-400/80 text-black rounded-full px-3 py-1 text-sm font-semibold">
+              {book.genre}
+            </span>
+            <span className={`inline-block rounded-full px-3 py-1 text-sm font-semibold ${
+              book.status === 'Read' ? 'bg-green-500/80 text-white' : 
+              book.status === 'Reading' ? 'bg-blue-500/80 text-white' : 
+              'bg-purple-500/80 text-white'
+            }`}>
+              {book.status}
+            </span>
+          </div>
+          
+          {book.status === 'Read' && (
+            <div className="flex">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span 
+                  key={star} 
+                  className={`text-xl star-animation ${star <= book.rating ? 'text-yellow-400' : 'text-gray-400/50'}`}
+                  style={{ '--star-index': star }}
+                >
+                  ★
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+        
+        {/* Hover Action Buttons */}
+        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button className="p-2 bg-black/50 backdrop-blur-sm text-white rounded-full hover:bg-black/70 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 20h9"></path>
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+            </svg>
+          </button>
+        </div>
       </div>
     );
   };

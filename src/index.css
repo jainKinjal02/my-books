@@ -91,11 +91,23 @@ body, p, div {
   animation: gradientFlow 15s ease infinite;
 }
 
+
+/* Card hover effects */
 .book-card {
-  transition: all 0.3s ease;
+  transform: perspective(1000px) rotateY(0deg);
+  transition: transform 0.5s ease;
 }
 
 .book-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+  transform: perspective(1000px) rotateY(5deg) translateY(-10px) !important;
+  box-shadow: -10px 10px 20px rgba(0,0,0,0.3) !important;
+}
+
+/* Better image handling */
+img {
+  transition: transform 0.5s ease;
+}
+
+.book-card:hover img {
+  transform: scale(1.05);
 }
