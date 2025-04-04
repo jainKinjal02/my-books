@@ -209,22 +209,77 @@ const App = () => {
     );
   };
   
-  // Landing Page Component
+  // Landing Page Component with animated background carousel
   const LandingPage = () => {
+    // State for background image carousel
+    const [currentBgIndex, setCurrentBgIndex] = useState(0);
+    const [isTransitioning, setIsTransitioning] = useState(false);
+    
+    // Background images - replace with your actual image paths
+    const backgroundImages = [
+      "/images/bg-photo-3.jpg", // Library shelves
+      "/images/bg-photo-1.jpg", // Closeup of open book
+      "/images/bg-photo-2.jpg", // Reading nook
+      "/images/bg-photo.jpg"  // Library entrance
+    ];
+    
+    // Effect for image carousel
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setIsTransitioning(true);
+        setTimeout(() => {
+          setCurrentBgIndex((prevIndex) => (prevIndex + 1) % backgroundImages.length);
+          setTimeout(() => {
+            setIsTransitioning(false);
+          }, 500);
+        }, 1000);
+      }, 2000); // Change image every 8 seconds
+      
+      return () => clearInterval(interval);
+    }, []);
+    
     return (
       <div className="h-screen w-full flex items-center justify-center relative overflow-hidden">
-        {/* Full-screen background image */}
+        {/* Background images with zoom/fade transitions */}
+        {backgroundImages.map((img, index) => (
+          <div 
+            key={index}
+            className={`absolute inset-0 bg-cover bg-center transition-all duration-2000 ease-in-out
+              ${currentBgIndex === index ? 'opacity-100 scale-100' : 'opacity-0 scale-110'}`}
+            style={{ 
+              backgroundImage: `url('${img}')`,
+              filter: "brightness(0.6)",
+              transitionProperty: "opacity, transform",
+              zIndex: currentBgIndex === index ? 1 : 0,
+              transform: isTransitioning && currentBgIndex === index ? 'scale(1.05)' : 'scale(1)'
+            }}
+          />
+        ))}
+        
+        {/* Radial gradient overlay */}
         <div 
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0 z-[2]"
           style={{ 
-            backgroundImage: "url('/bg-photo.jpg')",
-            filter: "brightness(0.7)"
+            background: 'radial-gradient(circle at center, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.6) 100%)'
           }}
-        ></div>
+        />
+        
+        {/* Floating book elements (decorative) */}
+        {/* <div className="absolute inset-0 z-[3] overflow-hidden">
+          <div className="book-float-1 absolute -left-10 top-1/4 text-white opacity-20">
+            <BookOpen size={80} />
+          </div>
+          <div className="book-float-2 absolute right-20 top-1/3 text-white opacity-10">
+            <Book size={120} />
+          </div>
+          <div className="book-float-3 absolute left-1/4 bottom-1/4 text-white opacity-15">
+            <Book size={60} />
+          </div>
+        </div> */}
         
         {/* Content container */}
         <div 
-          className={`z-10 text-center transition-all duration-500 ${
+          className={`z-10 text-center transition-all duration-700 ${
             landingHover ? "scale-110" : "scale-100"
           }`}
           onMouseEnter={() => setLandingHover(true)}
@@ -232,8 +287,11 @@ const App = () => {
           onClick={() => setView('dashboard')}
           style={{ cursor: 'pointer' }}
         >
-          <div className="animate-float">
-            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 tracking-wider drop-shadow-lg">
+          <div className="animate-float relative p-10">
+            {/* Subtle glow effect behind text */}
+            <div className="absolute inset-0 bg-black bg-opacity-30 rounded-3xl blur-xl -z-10 animate-pulse-slow"></div>
+            
+            <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 tracking-wider drop-shadow-lg font-playfair">
               Welcome to My Library
             </h1>
             
@@ -243,14 +301,14 @@ const App = () => {
               <div className="h-0.5 w-16 bg-white opacity-70"></div>
             </div>
             
-            <p className="text-xl text-white mt-6 drop-shadow-md max-w-xl mx-auto">
+            <p className="text-xl text-white mt-6 drop-shadow-md max-w-xl mx-auto font-libre">
               Discover your reading journey and track your literary adventures
             </p>
             
-            <div className={`mt-10 transition-opacity duration-500 ${
-              landingHover ? "opacity-100" : "opacity-0"
+            <div className={`mt-10 transition-all duration-500 ${
+              landingHover ? "opacity-100 transform translate-y-0" : "opacity-0 transform translate-y-4"
             }`}>
-              <span className="px-6 py-3 bg-white text-blue-900 rounded-full font-bold hover:bg-blue-50 transition-colors">
+              <span className="px-8 py-3 bg-white text-blue-900 rounded-full font-bold hover:bg-blue-50 transition-colors shadow-xl animate-pulse-slow">
                 Enter Library
               </span>
             </div>
@@ -300,7 +358,7 @@ const App = () => {
         <div 
           className="fixed inset-0 z-0 bg-cover bg-center opacity-10"
           style={{ 
-            backgroundImage: "url('/bg-photo.jpg')"
+            backgroundImage: "url('/api/placeholder/1200/800')"
           }}
         ></div>
         
@@ -671,12 +729,70 @@ const globalStyles = `
   100% { transform: translateY(0px); }
 }
 
+@keyframes pulse-slow {
+  0% { opacity: 0.9; }
+  50% { opacity: 1; }
+  100% { opacity: 0.9; }
+}
+
+@keyframes book-float-1 {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(20px, -15px) rotate(5deg); }
+  66% { transform: translate(-10px, 20px) rotate(-3deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+@keyframes book-float-2 {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(-25px, 15px) rotate(-8deg); }
+  66% { transform: translate(15px, -20px) rotate(5deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+@keyframes book-float-3 {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  33% { transform: translate(15px, 10px) rotate(3deg); }
+  66% { transform: translate(-15px, -15px) rotate(-5deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
 .animate-fadeIn {
   animation: fadeIn 0.3s ease-out forwards;
 }
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 4s ease-in-out infinite;
+}
+
+.book-float-1 {
+  animation: book-float-1 20s ease-in-out infinite;
+}
+
+.book-float-2 {
+  animation: book-float-2 25s ease-in-out infinite;
+}
+
+.book-float-3 {
+  animation: book-float-3 18s ease-in-out infinite;
+}
+
+.duration-2000 {
+  transition-duration: 2000ms;
+}
+
+/* Custom fonts */
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+.font-playfair {
+  font-family: 'Playfair Display', serif;
+}
+
+.font-libre {
+  font-family: 'Libre Baskerville', serif;
 }
 `;
 
