@@ -220,7 +220,7 @@ const BookCard = ({ book }) => {
   );
 };
   
-  // Stats card with animation
+
 // Enhanced StatCard component
 const StatCard = ({ icon, title, value, color }) => {
   const [isHovering, setIsHovering] = useState(false);
@@ -369,6 +369,12 @@ const StatCard = ({ icon, title, value, color }) => {
   const Dashboard = () => {
     return (
       <div className="min-h-screen bg-gray-100 flex flex-col">
+                <div 
+          className="fixed inset-0 z-0 bg-cover bg-center opacity-10"
+          style={{ 
+            backgroundImage: "url('/images/rey-seven-_nm_mZ4Cs2I-unsplash.jpg')"
+          }}
+        ></div>
         {/* Header/Nav */}
         <header className="bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg">
           <div className="container mx-auto py-4 px-6">
@@ -377,53 +383,12 @@ const StatCard = ({ icon, title, value, color }) => {
                 <BookOpen size={32} className="mr-2" />
                 <h1 className="text-2xl font-bold">My Reading Journey</h1>
               </div>
-<nav>
-  <ul className="flex space-x-6">
-    <li>
-      <button 
-        onClick={() => {
-          setActiveTab('library');
-        }}
-        className={`py-2 px-1 border-b-2 transition-all duration-300 ${
-          activeTab === 'library' 
-            ? 'border-white translate-y-0' 
-            : 'border-transparent hover:border-white/50 hover:-translate-y-1'
-        }`}
-      >
-        <Book className={`inline mr-1 transition-transform duration-300 ${
-          activeTab === 'library' ? 'rotate-0' : 'rotate-[-15deg]'
-        }`} size={18} /> Library
-      </button>
-    </li>
-    <li>
-      <button 
-        onClick={() => {
-          setActiveTab('stats');
-        }}
-        className={`py-2 px-1 border-b-2 transition-all duration-300 ${
-          activeTab === 'stats' 
-            ? 'border-white translate-y-0' 
-            : 'border-transparent hover:border-white/50 hover:-translate-y-1'
-        }`}
-      >
-        <Chart className={`inline mr-1 transition-transform duration-300 ${
-          activeTab === 'stats' ? 'rotate-0' : 'rotate-[-15deg]'
-        }`} size={18} /> Statistics
-      </button>
-    </li>
-  </ul>
-</nav>
             </div>
           </div>
         </header>
         
         {/* Background Image - Positioned with opacity */}
-        <div 
-          className="fixed inset-0 z-0 bg-cover bg-center opacity-10"
-          style={{ 
-            backgroundImage: "url('/api/placeholder/1200/800')"
-          }}
-        ></div>
+
         
         {/* Main Content */}
         <main className="flex-grow container mx-auto p-6 z-10">
