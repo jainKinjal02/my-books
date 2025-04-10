@@ -371,7 +371,7 @@ const App = () => {
     );
   };
 
-  // Main Dashboard (original app)
+// Main Dashboard (original app)
 const Dashboard = () => {
   const bgImage = "/images/rey-seven-_nm_mZ4Cs2I-unsplash.jpg";
   const [searchInput, setSearchInput] = useState('');
@@ -431,7 +431,8 @@ const Dashboard = () => {
           opacity: '0.9'
         }}>
       </div>
-      <div className="relative z-10 flex flex-col flex-grow">
+      <div className="relative z-10 flex flex-col h-screen">
+        {/* Fixed Header */}
         <header className="backdrop-blur-md bg-black/30 text-white shadow-lg sticky top-0 z-50">
           <div className="container mx-auto py-4 px-6">
             <div className="flex justify-between items-center">
@@ -462,81 +463,87 @@ const Dashboard = () => {
           </div>
         </header>
 
-        <main className="flex-grow container mx-auto p-6 z-10">
-          {/* Filters Row - FIXED PLACEMENT: Filters and Add Book button in same row */}
-          <div className="flex flex-wrap gap-4 mb-8">
-            <div className="flex-1 min-w-[200px]">
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg bg-black/30 backdrop-blur-md text-white border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50"
-              >
-                <option value="All">All Books</option>
-                <option value="Read">Read</option>
-                <option value="Reading">Currently Reading</option>
-                <option value="To Read">To Read</option>
-              </select>
-            </div>
+        {/* Fixed Filters Row */}
+        <div className= "sticky top-[73px] z-40 py-4 border-white/10">
+          <div className="container mx-auto px-6">
+            <div className="flex flex-wrap gap-4 items-center">
+              <div className="flex-1 min-w-[150px]">
+                <select
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                  className="w-full px-4 py-3 rounded-lg bg-black/30 backdrop-blur-md text-white border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50"
+                >
+                  <option value="All">All Books</option>
+                  <option value="Read">Read</option>
+                  <option value="Reading">Currently Reading</option>
+                  <option value="To Read">To Read</option>
+                </select>
+              </div>
 
-            <div className="flex-1 min-w-[200px]">
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg bg-black/30 backdrop-blur-md text-white border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50"
-              >
-                <option value="title">Sort by Title</option>
-                <option value="author">Sort by Author</option>
-                <option value="genre">Sort by Genre</option>
-                <option value="rating">Sort by Rating</option>
-              </select>
-            </div>
+              <div className="flex-1 min-w-[150px]">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="w-full px-4 py-3 rounded-lg bg-black/30 backdrop-blur-md text-white border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50"
+                >
+                  <option value="title">Sort by Title</option>
+                  <option value="author">Sort by Author</option>
+                  <option value="genre">Sort by Genre</option>
+                  <option value="rating">Sort by Rating</option>
+                </select>
+              </div>
 
-            <div className="flex-1 min-w-[200px]">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/70" size={18} />
-                <input
-                  type="text"
-                  placeholder="Search by title..."
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-lg bg-black/30 backdrop-blur-md text-white border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50"
-                />
-                {isSearching && (
-                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                    <div className="animate-spin h-4 w-4 border-2 border-white/50 rounded-full border-t-transparent"></div>
-                  </div>
-                )}
+              <div className="flex-1 min-w-[200px]">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/70" size={18} />
+                  <input
+                    type="text"
+                    placeholder="Search by title..."
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 rounded-lg bg-black/30 backdrop-blur-md text-white border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50"
+                  />
+                  {isSearching && (
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                      <div className="animate-spin h-4 w-4 border-2 border-white/50 rounded-full border-t-transparent"></div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Add Book button */}
+              <div className="flex-0">
+                <button
+                  onClick={() => setShowAddForm(true)}
+                  className="h-full px-6 py-3 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition-all shadow-lg hover:shadow-blue-500/30 flex items-center space-x-2 whitespace-nowrap"
+                >
+                  <PlusCircle size={18} /> <span>Add Book</span>
+                </button>
               </div>
             </div>
+          </div>
+        </div>
 
-            {/* Add Book button moved up here, inline with filters */}
-            <div className="flex-0">
-              <button
-                onClick={() => setShowAddForm(true)}
-                className="px-6 py-3 h-full bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition-all shadow-lg hover:shadow-blue-500/30 flex items-center space-x-2"
-              >
-                <PlusCircle size={18} /> <span>Add Book</span>
-              </button>
+        {/* Scrollable Book Grid */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="container mx-auto p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {booksToDisplay.map((book) => (
+                <VisualBookCard key={book.id} book={book} />
+              ))}
+
+              {booksToDisplay.length === 0 && (
+                <div className="col-span-full text-center py-12 bg-black/30 backdrop-blur-md rounded-lg text-white">
+                  <p className="text-white/80 text-lg">
+                    {debouncedSearch
+                      ? `No books found matching "${debouncedSearch}". Try adjusting your search.`
+                      : "No books found. Try adjusting your filters or add a new book."}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
-
-          {/* Book Grid moved OUTSIDE of filters row */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {booksToDisplay.map((book) => (
-              <VisualBookCard key={book.id} book={book} />
-            ))}
-
-            {booksToDisplay.length === 0 && (
-              <div className="col-span-full text-center py-12 bg-black/30 backdrop-blur-md rounded-lg text-white">
-                <p className="text-white/80 text-lg">
-                  {debouncedSearch
-                    ? `No books found matching "${debouncedSearch}". Try adjusting your search.`
-                    : "No books found. Try adjusting your filters or add a new book."}
-                </p>
-              </div>
-            )}
-          </div>
-        </main>
+        </div>
 
         {/* Add Book Modal */}
         {showAddForm && (
