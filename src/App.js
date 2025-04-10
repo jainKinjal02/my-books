@@ -7,11 +7,18 @@ const App = () => {
 
   // State for books
   const [books, setBooks] = useState([
-    { id: 1, title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', genre: 'Classic', status: 'Read', rating: 4, pages: 180, notes: 'A masterpiece of American literature' },
-    { id: 2, title: 'To Kill a Mockingbird', author: 'Harper Lee', genre: 'Fiction', status: 'Reading', rating: 5, pages: 281, notes: 'Compelling story about justice and moral growth' },
-    { id: 3, title: '1984', author: 'George Orwell', genre: 'Dystopian', status: 'To Read', rating: 0, pages: 328, notes: '' },
-    { id: 4, title: 'Pride and Prejudice', author: 'Jane Austen', genre: 'Romance', status: 'Read', rating: 4, pages: 279, notes: 'Witty romance with memorable characters' },
-    { id: 5, title: 'The Hobbit', author: 'J.R.R. Tolkien', genre: 'Fantasy', status: 'Read', rating: 5, pages: 310, notes: 'Amazing adventure fantasy' },
+    { id: 1, title: 'The Magic', author: 'Rhonda Byrne', genre: 'Classic', status: 'Read', rating: 4, pages: 180, notes: 'A masterpiece of American literature' },
+    { id: 2, title: 'I Too Had A Love Story', author: 'Ravinder Singh', genre: 'Fiction', status: 'Read', rating: 3, pages: 380, notes: 'A masterpiece of American literature' },
+    { id: 3, title: 'The Immortals Of Meluha', author: 'Amish Tripathi', genre: 'Classic', status: 'Read', rating: 4, pages: 380, notes: 'A masterpiece of American literature' },
+    { id: 4, title: 'Too Good To Be True', author: 'Prajakta Koli', genre: 'Fiction', status: 'Read', rating: 3, pages: 280, notes: 'A masterpiece of American literature' },
+    { id: 5, title: 'The Spanish Love Deception', author: 'Elena Armas', genre: 'Fiction', status: 'Read', rating: 4, pages: 340, notes: 'A masterpiece of American literature' },
+    { id: 6, title: 'The American Room Experiment', author: 'Elena Armas', genre: 'Fiction', status: 'Reading', rating: 5, pages: 150, notes: 'A masterpiece of American literature' },
+
+    { id: 7, title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', genre: 'Classic', status: 'Read', rating: 4, pages: 180, notes: 'A masterpiece of American literature' },
+    { id: 8, title: 'To Kill a Mockingbird', author: 'Harper Lee', genre: 'Fiction', status: 'Reading', rating: 5, pages: 281, notes: 'Compelling story about justice and moral growth' },
+    { id: 9, title: '1984', author: 'George Orwell', genre: 'Dystopian', status: 'To Read', rating: 0, pages: 328, notes: '' },
+    { id: 10, title: 'Pride and Prejudice', author: 'Jane Austen', genre: 'Romance', status: 'Read', rating: 4, pages: 279, notes: 'Witty romance with memorable characters' },
+    { id: 11, title: 'The Hobbit', author: 'J.R.R. Tolkien', genre: 'Fantasy', status: 'Read', rating: 5, pages: 310, notes: 'Amazing adventure fantasy' },
   ]);
 
   // Reading stats
@@ -498,7 +505,7 @@ const Dashboard = () => {
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/70" size={18} />
                   <input
                     type="text"
-                    placeholder="Search by title..."
+                    placeholder="Find your fav.."
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
                     className="w-full pl-10 pr-4 py-3 rounded-lg bg-black/30 backdrop-blur-md text-white border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50"
@@ -682,6 +689,12 @@ const Dashboard = () => {
   const VisualBookCard = ({ book }) => {
     // Map of book covers - in a real app, you'd store these with your book data
     const bookCovers = {
+      'The Magic': '/images/books/theMagic.png',
+      'I Too Had A Love Story': '/images/books/tooHadALoveStory.png',
+      'The Immortals Of Meluha': '/images/books/meluha.png',
+      'Too Good To Be True': '/images/books/goosTooBeTrue.png',
+      'The Spanish Love Deception': '/images/books/loveDeception.png',
+      'The American Room Experiment': 'images/books/americanRoomExp.png',
       'The Great Gatsby': '/images/books/theGreatGatsby.png',
       'To Kill a Mockingbird': '/images/books/mockingBird.png',
       '1984': '/images/books/1984.png',
