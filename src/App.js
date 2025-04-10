@@ -372,297 +372,305 @@ const App = () => {
   };
 
   // Main Dashboard (original app)
-  const Dashboard = () => {
-    const bgImage = "/images/rey-seven-_nm_mZ4Cs2I-unsplash.jpg";
-    const [searchInput, setSearchInput] = useState('');
-    const [debouncedSearch, setDebouncedSearch] = useState('');
-    const [isSearching, setIsSearching] = useState(false);
+const Dashboard = () => {
+  const bgImage = "/images/rey-seven-_nm_mZ4Cs2I-unsplash.jpg";
+  const [searchInput, setSearchInput] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
 
-    useEffect(() => {
-      // Show searching indicator immediately
-      if (searchInput !== debouncedSearch) {
-        setIsSearching(true);
-      }
+  useEffect(() => {
+    // Show searching indicator immediately
+    if (searchInput !== debouncedSearch) {
+      setIsSearching(true);
+    }
 
-      // Debounce the search input
-      const timerId = setTimeout(() => {
-        setDebouncedSearch(searchInput);
-        setIsSearching(false);
-      }, 300); // 300ms debounce time
+    // Debounce the search input
+    const timerId = setTimeout(() => {
+      setDebouncedSearch(searchInput);
+      setIsSearching(false);
+    }, 300); // 300ms debounce time
 
-      // Cleanup
-      return () => clearTimeout(timerId);
-    }, [searchInput, debouncedSearch]);
+    // Cleanup
+    return () => clearTimeout(timerId);
+  }, [searchInput, debouncedSearch]);
 
-    const filteredBooks = useCallback(() => {
-      return books
-        .filter(book => filterStatus === 'All' || book.status === filterStatus)
-        .filter(book =>
-          book.title.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-          book.author.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-          book.genre.toLowerCase().includes(debouncedSearch.toLowerCase())
-        )
-        .sort((a, b) => {
-          const valA = a[sortBy];
-          const valB = b[sortBy];
+  const filteredBooks = useCallback(() => {
+    return books
+      .filter(book => filterStatus === 'All' || book.status === filterStatus)
+      .filter(book =>
+        book.title.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        book.author.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        book.genre.toLowerCase().includes(debouncedSearch.toLowerCase())
+      )
+      .sort((a, b) => {
+        const valA = a[sortBy];
+        const valB = b[sortBy];
 
-          if (typeof valA === 'string' && typeof valB === 'string') {
-            return isAscending
-              ? valA.localeCompare(valB)
-              : valB.localeCompare(valA);
-          }
-
+        if (typeof valA === 'string' && typeof valB === 'string') {
           return isAscending
-            ? valA - valB
-            : valB - valA;
-        });
-    }, [books, filterStatus, debouncedSearch, sortBy, isAscending]);
+            ? valA.localeCompare(valB)
+            : valB.localeCompare(valA);
+        }
 
-    const booksToDisplay = filteredBooks();
+        return isAscending
+          ? valA - valB
+          : valB - valA;
+      });
+  }, [books, filterStatus, debouncedSearch, sortBy, isAscending]);
 
-    return (
-      <div className="min-h-screen flex flex-col relative">
+  const booksToDisplay = filteredBooks();
 
-        <div className="absolute inset-0 z-0"
-          style={{
-            backgroundImage: `url('${bgImage}')`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundAttachment: 'fixed',
-            opacity: '0.9'
-          }}>
-        </div>
-        <div className="relative z-10 flex flex-col flex-grow">
-          <header className="backdrop-blur-md bg-black/30 text-white shadow-lg sticky top-0 z-50">
-            <div className="container mx-auto py-4 px-6">
-              <div className="flex justify-between items-center">
-                <div className="flex items-center">
-                  <button
-                    onClick={() => handleViewChange('landing')}
-                    className="mr-3 p-2 rounded-full hover:bg-white/10 transition-all duration-300"
-                    title="Back to welcome page"
+  return (
+    <div className="min-h-screen flex flex-col relative">
+      <div className="absolute inset-0 z-0"
+        style={{
+          backgroundImage: `url('${bgImage}')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+          opacity: '0.9'
+        }}>
+      </div>
+      <div className="relative z-10 flex flex-col flex-grow">
+        <header className="backdrop-blur-md bg-black/30 text-white shadow-lg sticky top-0 z-50">
+          <div className="container mx-auto py-4 px-6">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center">
+                <button
+                  onClick={() => handleViewChange('landing')}
+                  className="mr-3 p-2 rounded-full hover:bg-white/10 transition-all duration-300"
+                  title="Back to welcome page"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="transition-transform duration-300 hover:-translate-x-1"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="transition-transform duration-300 hover:-translate-x-1"
-                    >
-                      <path d="M19 12H5M12 19l-7-7 7-7" />
-                    </svg>
-                  </button>
-                  <h1 className="text-3xl font-bold font-playfair">My Reading Journey</h1>
-                </div>
+                    <path d="M19 12H5M12 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <h1 className="text-3xl font-bold font-playfair">My Reading Journey</h1>
               </div>
             </div>
-          </header>
+          </div>
+        </header>
 
-          <main className="flex-grow container mx-auto p-6 z-10">
-            {/* Filters Row */}
-            <div className="flex flex-wrap gap-4 mb-8">
-              <div className="flex-1 min-w-[200px]">
-                <select
-                  value={filterStatus}
-                  onChange={(e) => setFilterStatus(e.target.value)}
-                  className="w-full px-4 py-3 rounded-lg bg-black/30 backdrop-blur-md text-white border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50"
-                >
-                  <option value="All">All Books</option>
-                  <option value="Read">Read</option>
-                  <option value="Reading">Currently Reading</option>
-                  <option value="To Read">To Read</option>
-                </select>
-              </div>
+        <main className="flex-grow container mx-auto p-6 z-10">
+          {/* Filters Row - FIXED PLACEMENT: Filters and Add Book button in same row */}
+          <div className="flex flex-wrap gap-4 mb-8">
+            <div className="flex-1 min-w-[200px]">
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+                className="w-full px-4 py-3 rounded-lg bg-black/30 backdrop-blur-md text-white border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50"
+              >
+                <option value="All">All Books</option>
+                <option value="Read">Read</option>
+                <option value="Reading">Currently Reading</option>
+                <option value="To Read">To Read</option>
+              </select>
+            </div>
 
-              <div className="flex-1 min-w-[200px]">
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="w-full px-4 py-3 rounded-lg bg-black/30 backdrop-blur-md text-white border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50"
-                >
-                  <option value="title">Sort by Title</option>
-                  <option value="author">Sort by Author</option>
-                  <option value="genre">Sort by Genre</option>
-                  <option value="rating">Sort by Rating</option>
-                </select>
-              </div>
+            <div className="flex-1 min-w-[200px]">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="w-full px-4 py-3 rounded-lg bg-black/30 backdrop-blur-md text-white border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50"
+              >
+                <option value="title">Sort by Title</option>
+                <option value="author">Sort by Author</option>
+                <option value="genre">Sort by Genre</option>
+                <option value="rating">Sort by Rating</option>
+              </select>
+            </div>
 
-              <div className="flex-1 min-w-[200px]">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/70" size={18} />
-                  <input
-                    type="text"
-                    placeholder="Search by title..."
-                    value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 rounded-lg bg-black/30 backdrop-blur-md text-white border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50"
-                  />
-                  {isSearching && (
-                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                      <div className="animate-spin h-4 w-4 border-2 border-white/50 rounded-full border-t-transparent"></div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Add Book Modal */}
-              {showAddForm && (
-                <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
-                  <div className="bg-white p-8 rounded-lg shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto animate-fadeIn">
-                    <div className="flex justify-between items-center mb-6">
-                      <h2 className="text-2xl font-bold">Add New Book</h2>
-                      <button
-                        onClick={() => setShowAddForm(false)}
-                        className="p-2 rounded-full hover:bg-gray-100"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M18 6L6 18M6 6l12 12"></path>
-                        </svg>
-                      </button>
-                    </div>
-
-                    {/* Add Book Form */}
-                    {/* Add Book Form */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                      <div>
-                        <label className="block text-gray-700 mb-2">Title *</label>
-                        <input
-                          type="text"
-                          value={newBook.title}
-                          onChange={(e) => setNewBook({ ...newBook, title: e.target.value })}
-                          className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="Enter book title"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-gray-700 mb-2">Author *</label>
-                        <input
-                          type="text"
-                          value={newBook.author}
-                          onChange={(e) => setNewBook({ ...newBook, author: e.target.value })}
-                          className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="Enter author name"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-gray-700 mb-2">Cover Image URL</label>
-                        <input
-                          type="text"
-                          value={newBook.coverUrl || ''}
-                          onChange={(e) => setNewBook({ ...newBook, coverUrl: e.target.value })}
-                          className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="https://example.com/book-cover.jpg"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-gray-700 mb-2">Genre</label>
-                        <select
-                          value={newBook.genre}
-                          onChange={(e) => setNewBook({ ...newBook, genre: e.target.value })}
-                          className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        >
-                          <option value="">Select a genre</option>
-                          <option value="Classic">Classic</option>
-                          <option value="Fiction">Fiction</option>
-                          <option value="Fantasy">Fantasy</option>
-                          <option value="Sci-Fi">Sci-Fi</option>
-                          <option value="Mystery">Mystery</option>
-                          <option value="Romance">Romance</option>
-                          <option value="Biography">Biography</option>
-                          <option value="Dystopian">Dystopian</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-gray-700 mb-2">Status</label>
-                        <select
-                          value={newBook.status}
-                          onChange={(e) => setNewBook({ ...newBook, status: e.target.value })}
-                          className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        >
-                          <option value="To Read">To Read</option>
-                          <option value="Reading">Currently Reading</option>
-                          <option value="Read">Read</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-gray-700 mb-2">Pages</label>
-                        <input
-                          type="number"
-                          value={newBook.pages}
-                          onChange={(e) => setNewBook({ ...newBook, pages: parseInt(e.target.value) || 0 })}
-                          className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="Number of pages"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-gray-700 mb-2">Rating (if read)</label>
-                        <div className="flex items-center">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <button
-                              key={star}
-                              type="button"
-                              onClick={() => setNewBook({ ...newBook, rating: star })}
-                              className={`text-2xl focus:outline-none ${star <= newBook.rating ? 'text-yellow-400' : 'text-gray-300'
-                                }`}
-                              disabled={newBook.status !== 'Read'}
-                            >
-                              ★
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-span-full mb-4">
-                      <label className="block text-gray-700 mb-2">Notes</label>
-                      <textarea
-                        value={newBook.notes}
-                        onChange={(e) => setNewBook({ ...newBook, notes: e.target.value })}
-                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Add your thoughts about this book"
-                        rows="3"
-                      ></textarea>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Book Grid using booksToDisplay instead of filteredBooks */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {booksToDisplay.map((book) => (
-                  <VisualBookCard key={book.id} book={book} />
-                ))}
-
-                {booksToDisplay.length === 0 && (
-                  <div className="col-span-full text-center py-12 bg-black/30 backdrop-blur-md rounded-lg text-white">
-                    <p className="text-white/80 text-lg">
-                      {debouncedSearch
-                        ? `No books found matching "${debouncedSearch}". Try adjusting your search.`
-                        : "No books found. Try adjusting your filters or add a new book."}
-                    </p>
+            <div className="flex-1 min-w-[200px]">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/70" size={18} />
+                <input
+                  type="text"
+                  placeholder="Search by title..."
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 rounded-lg bg-black/30 backdrop-blur-md text-white border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50"
+                />
+                {isSearching && (
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                    <div className="animate-spin h-4 w-4 border-2 border-white/50 rounded-full border-t-transparent"></div>
                   </div>
                 )}
               </div>
+            </div>
 
+            {/* Add Book button moved up here, inline with filters */}
+            <div className="flex-0">
               <button
                 onClick={() => setShowAddForm(true)}
-                className="px-6 py-3 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition-all shadow-lg hover:shadow-blue-500/30 flex items-center space-x-2"
+                className="px-6 py-3 h-full bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg transition-all shadow-lg hover:shadow-blue-500/30 flex items-center space-x-2"
               >
                 <PlusCircle size={18} /> <span>Add Book</span>
               </button>
             </div>
-          </main>
+          </div>
 
+          {/* Book Grid moved OUTSIDE of filters row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {booksToDisplay.map((book) => (
+              <VisualBookCard key={book.id} book={book} />
+            ))}
 
+            {booksToDisplay.length === 0 && (
+              <div className="col-span-full text-center py-12 bg-black/30 backdrop-blur-md rounded-lg text-white">
+                <p className="text-white/80 text-lg">
+                  {debouncedSearch
+                    ? `No books found matching "${debouncedSearch}". Try adjusting your search.`
+                    : "No books found. Try adjusting your filters or add a new book."}
+                </p>
+              </div>
+            )}
+          </div>
+        </main>
 
-        </div>
+        {/* Add Book Modal */}
+        {showAddForm && (
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+            <div className="bg-white p-8 rounded-lg shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto animate-fadeIn">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">Add New Book</h2>
+                <button
+                  onClick={() => setShowAddForm(false)}
+                  className="p-2 rounded-full hover:bg-gray-100"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 6L6 18M6 6l12 12"></path>
+                  </svg>
+                </button>
+              </div>
+
+              {/* Add Book Form */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className="block text-gray-700 mb-2">Title *</label>
+                  <input
+                    type="text"
+                    value={newBook.title}
+                    onChange={(e) => setNewBook({ ...newBook, title: e.target.value })}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Enter book title"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-700 mb-2">Author *</label>
+                  <input
+                    type="text"
+                    value={newBook.author}
+                    onChange={(e) => setNewBook({ ...newBook, author: e.target.value })}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Enter author name"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-700 mb-2">Cover Image URL</label>
+                  <input
+                    type="text"
+                    value={newBook.coverUrl || ''}
+                    onChange={(e) => setNewBook({ ...newBook, coverUrl: e.target.value })}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="https://example.com/book-cover.jpg"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-700 mb-2">Genre</label>
+                  <select
+                    value={newBook.genre}
+                    onChange={(e) => setNewBook({ ...newBook, genre: e.target.value })}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Select a genre</option>
+                    <option value="Classic">Classic</option>
+                    <option value="Fiction">Fiction</option>
+                    <option value="Fantasy">Fantasy</option>
+                    <option value="Sci-Fi">Sci-Fi</option>
+                    <option value="Mystery">Mystery</option>
+                    <option value="Romance">Romance</option>
+                    <option value="Biography">Biography</option>
+                    <option value="Dystopian">Dystopian</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-gray-700 mb-2">Status</label>
+                  <select
+                    value={newBook.status}
+                    onChange={(e) => setNewBook({ ...newBook, status: e.target.value })}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="To Read">To Read</option>
+                    <option value="Reading">Currently Reading</option>
+                    <option value="Read">Read</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-gray-700 mb-2">Pages</label>
+                  <input
+                    type="number"
+                    value={newBook.pages}
+                    onChange={(e) => setNewBook({ ...newBook, pages: parseInt(e.target.value) || 0 })}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Number of pages"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-700 mb-2">Rating (if read)</label>
+                  <div className="flex items-center">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => setNewBook({ ...newBook, rating: star })}
+                        className={`text-2xl focus:outline-none ${star <= newBook.rating ? 'text-yellow-400' : 'text-gray-300'
+                          }`}
+                        disabled={newBook.status !== 'Read'}
+                      >
+                        ★
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="col-span-full mb-4">
+                <label className="block text-gray-700 mb-2">Notes</label>
+                <textarea
+                  value={newBook.notes}
+                  onChange={(e) => setNewBook({ ...newBook, notes: e.target.value })}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="Add your thoughts about this book"
+                  rows="3"
+                ></textarea>
+              </div>
+              
+              {/* Add Save Button */}
+              <div className="flex justify-end mt-6">
+                <button
+                  onClick={handleAddBook}
+                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+                >
+                  Save Book
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-    );
-  };
+    </div>
+  );
+};
 
   const VisualBookCard = ({ book }) => {
     // Map of book covers - in a real app, you'd store these with your book data
