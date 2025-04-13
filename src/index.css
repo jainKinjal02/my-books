@@ -132,8 +132,8 @@ img {
     #0f766e, /* teal */
     #155e75  /* dark teal */
   );
-  background-size: 400% 400%;
-  animation: gradient 15s ease infinite;
+  background-size: 300% 300%;
+  animation: gradient 5s ease infinite;
 }
 
 /* Add subtle vignette overlay to match image */
