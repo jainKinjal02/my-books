@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { BookOpen, Book, Clock, Check, Award, Search, Heart, PlusCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import BookDetailView from './components/ui/BookDetailView';
 
 const App = () => {
+  const [selectedBook, setSelectedBook] = useState(null);
   // State for current view
   const [view, setView] = useState('landing');
 
@@ -85,6 +87,18 @@ const App = () => {
       favoriteGenre
     });
   }, [books]);
+
+  // Add this function to handle viewing book details
+const handleViewBookDetails = (book) => {
+  setSelectedBook(book);
+  setView('bookDetail'); // Switch to book detail view
+};
+
+// Add this function to go back from book details to dashboard
+const handleCloseBookDetails = () => {
+  setSelectedBook(null);
+  setView('dashboard');
+};
 
   // Add new book
   const handleAddBook = () => {
@@ -536,7 +550,10 @@ const Dashboard = () => {
           <div className="container mx-auto p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {booksToDisplay.map((book) => (
-                <VisualBookCard key={book.id} book={book} />
+                <VisualBookCard     
+                key={book.id} 
+                book={book} 
+                onViewDetails={handleViewBookDetails} />
               ))}
 
               {booksToDisplay.length === 0 && (
@@ -686,91 +703,101 @@ const Dashboard = () => {
   );
 };
 
-  const VisualBookCard = ({ book }) => {
-    // Map of book covers - in a real app, you'd store these with your book data
-    const bookCovers = {
-      'The Magic': '/images/books/theMagic.png',
-      'I Too Had A Love Story': '/images/books/tooHadALoveStory.png',
-      'The Immortals Of Meluha': '/images/books/meluha.png',
-      'Too Good To Be True': '/images/books/goosTooBeTrue.png',
-      'The Spanish Love Deception': '/images/books/loveDeception.png',
-      'The American Room Experiment': 'images/books/americanRoomExp.png',
-      'The Great Gatsby': '/images/books/theGreatGatsby.png',
-      'To Kill a Mockingbird': '/images/books/mockingBird.png',
-      '1984': '/images/books/1984.png',
-      'Pride and Prejudice': '/images/books/pride&Prejudice.png',
-      'The Hobbit': '/images/books/TheHobbit.png',
-      // Add default cover as fallback
-      'default': '/images/bg-photo.jpg'
-    };
 
-    // Get book cover or fallback to default
-    const coverImage = book.coverUrl || bookCovers[book.title] || bookCovers.default;
+const VisualBookCard = ({ book, onViewDetails }) => {
+  // Map of book covers - in a real app, you'd store these with your book data
+  const bookCovers = {
+    'The Magic': '/images/books/theMagic.png',
+    'I Too Had A Love Story': '/images/books/tooHadALoveStory.png',
+    'The Immortals Of Meluha': '/images/books/meluha.png',
+    'Too Good To Be True': '/images/books/goosTooBeTrue.png',
+    'The Spanish Love Deception': '/images/books/loveDeception.png',
+    'The American Room Experiment': 'images/books/americanRoomExp.png',
+    'The Great Gatsby': '/images/books/theGreatGatsby.png',
+    'To Kill a Mockingbird': '/images/books/mockingBird.png',
+    '1984': '/images/books/1984.png',
+    'Pride and Prejudice': '/images/books/pride&Prejudice.png',
+    'The Hobbit': '/images/books/TheHobbit.png',
+    // Add default cover as fallback
+    'default': '/images/bg-photo.jpg'
+  };
 
-    return (
-      <div className="book-card rounded-lg overflow-hidden shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 relative group">
-        {/* Book Cover Image */}
-        <div className="relative aspect-[2/3] overflow-hidden">
-          <img
-            src={coverImage}
-            alt={book.title}
-            className="object-cover w-full h-full"
-            onError={(e) => {
-              e.target.src = bookCovers.default;
-            }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+  // Get book cover or fallback to default
+  const coverImage = book.coverUrl || bookCovers[book.title] || bookCovers.default;
+
+  return (
+    <div 
+      className="book-card rounded-lg overflow-hidden shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 relative group cursor-pointer"
+      onClick={() => onViewDetails(book)}
+    >
+      {/* Book Cover Image */}
+      <div className="relative aspect-[2/3] overflow-hidden">
+        <img
+          src={coverImage}
+          alt={book.title}
+          className="object-cover w-full h-full"
+          onError={(e) => {
+            e.target.src = bookCovers.default;
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+      </div>
+
+      {/* Book Info */}
+      <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+        <h3 className="text-2xl font-bold mb-1 drop-shadow-lg">{book.title}</h3>
+        <p className="text-white/80 mb-2">by {book.author}</p>
+
+        <div className="flex flex-wrap gap-2 mb-2">
+          <span className="inline-block bg-yellow-400/80 text-black rounded-full px-3 py-1 text-sm font-semibold">
+            {book.genre}
+          </span>
+          <span className={`inline-block rounded-full px-3 py-1 text-sm font-semibold ${book.status === 'Read' ? 'bg-green-500/80 text-white' :
+            book.status === 'Reading' ? 'bg-blue-500/80 text-white' :
+              'bg-purple-500/80 text-white'
+            }`}>
+            {book.status}
+          </span>
         </div>
 
-        {/* Book Info */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
-          <h3 className="text-2xl font-bold mb-1 drop-shadow-lg">{book.title}</h3>
-          <p className="text-white/80 mb-2">by {book.author}</p>
-
-          <div className="flex flex-wrap gap-2 mb-2">
-            <span className="inline-block bg-yellow-400/80 text-black rounded-full px-3 py-1 text-sm font-semibold">
-              {book.genre}
-            </span>
-            <span className={`inline-block rounded-full px-3 py-1 text-sm font-semibold ${book.status === 'Read' ? 'bg-green-500/80 text-white' :
-              book.status === 'Reading' ? 'bg-blue-500/80 text-white' :
-                'bg-purple-500/80 text-white'
-              }`}>
-              {book.status}
-            </span>
+        {book.status === 'Read' && (
+          <div className="flex">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <span
+                key={star}
+                className={`text-xl star-animation ${star <= book.rating ? 'text-yellow-400' : 'text-gray-400/50'}`}
+                style={{ '--star-index': star }}
+              >
+                ★
+              </span>
+            ))}
           </div>
+        )}
+      </div>
 
-          {book.status === 'Read' && (
-            <div className="flex">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <span
-                  key={star}
-                  className={`text-xl star-animation ${star <= book.rating ? 'text-yellow-400' : 'text-gray-400/50'}`}
-                  style={{ '--star-index': star }}
-                >
-                  ★
-                </span>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Hover Action Buttons */}
-        <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button className="p-2 bg-black/50 backdrop-blur-sm text-white rounded-full hover:bg-black/70 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 20h9"></path>
-              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-            </svg>
-          </button>
+      {/* View Details Indicator - shows on hover */}
+      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="bg-black/50 backdrop-blur-sm text-white px-4 py-2 rounded-lg shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform">
+          View Details
         </div>
       </div>
-    );
-  };
+    </div>
+  );
+};
 
   // Main App Rendering
   return (
     <>
-      {view === 'landing' ? <LandingPage /> : <Dashboard />}
+          {view === 'landing' ? (
+      <LandingPage />
+    ) : view === 'bookDetail' ? (
+      <BookDetailView 
+        book={selectedBook} 
+        onClose={handleCloseBookDetails} 
+      />
+    ) : (
+      <Dashboard />
+    )}
     </>
   );
 };
