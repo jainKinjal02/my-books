@@ -1,9 +1,16 @@
-// BookDetailView.js
-// This is a simple placeholder component - we'll enhance it in the next step
-import React from 'react';
-import { ArrowLeft } from 'lucide-react';
+// BookDetailView.js with teal-blue animated gradient background
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, BookOpen, Heart, Share2, Bookmark, Download } from 'lucide-react';
 
 const BookDetailView = ({ book, onClose }) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
+
+  // Animation effect on component mount
+  useEffect(() => {
+    setIsLoaded(true);
+  }, []);
+
   // Simple function to get book cover image
   const getBookCover = () => {
     const bookCovers = {
@@ -29,40 +36,72 @@ const BookDetailView = ({ book, onClose }) => {
   if (!book) return <div>No book selected</div>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white">
+    <div className={`min-h-screen relative transition-opacity duration-700 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+      {/* Teal-Blue Animated Gradient Background */}
+      <div className="fixed inset-0 z-0 teal-blue-gradient"></div>
+      
       {/* Header with back button */}
       <div className="sticky top-0 z-40 backdrop-blur-md bg-black/30 text-white shadow-lg">
         <div className="container mx-auto px-6 py-4">
-          <button
-            onClick={onClose}
-            className="flex items-center gap-2 text-white/80 hover:text-white transition-colors"
-          >
-            <ArrowLeft size={20} />
-            <span>Back to Library</span>
-          </button>
+          <div className="flex justify-between items-center">
+            <button
+              onClick={onClose}
+              className="flex items-center gap-2 text-white/80 hover:text-white transition-colors"
+            >
+              <ArrowLeft size={20} />
+              <span>Back to Library</span>
+            </button>
+            
+            {/* Action buttons */}
+            <div className="flex gap-3">
+              <button className="w-9 h-9 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 transition-all">
+                <Heart size={18} className="text-white/80" />
+              </button>
+              <button className="w-9 h-9 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 transition-all">
+                <Bookmark size={18} className="text-white/80" />
+              </button>
+              <button className="w-9 h-9 rounded-full flex items-center justify-center bg-white/10 hover:bg-white/20 transition-all">
+                <Share2 size={18} className="text-white/80" />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
       
       {/* Basic book info - to be expanded later */}
-      <div className="container mx-auto px-6 py-8">
+      <div className="container mx-auto px-6 py-8 relative z-10">
         <div className="flex flex-col md:flex-row gap-8">
-          {/* Book cover */}
-          <div className="w-full md:w-1/3 lg:w-1/4">
-            <div className="aspect-[2/3] rounded-lg overflow-hidden shadow-xl">
-              <img 
-                src={getBookCover()} 
-                alt={book.title} 
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  e.target.src = '/images/bg-photo.jpg';
-                }}
-              />
+          {/* Book cover with animation */}
+          <div className="w-full md:w-1/3 lg:w-1/4 perspective-1000">
+            <div 
+              className={`book-cover relative transition-all duration-500 transform-3d preserve-3d 
+                ${isHovering ? 'rotate-y-10 scale-105 shadow-2xl' : 'rotate-y-0 shadow-xl'}`}
+              onMouseEnter={() => setIsHovering(true)}
+              onMouseLeave={() => setIsHovering(false)}
+            >
+              {/* Front cover */}
+              <div className="aspect-[2/3] rounded-lg overflow-hidden bg-black/50 absolute inset-0 backface-hidden">
+                <img 
+                  src={getBookCover()} 
+                  alt={book.title} 
+                  className="w-full h-full object-cover transition-transform duration-500"
+                  onError={(e) => {
+                    e.target.src = '/images/bg-photo.jpg';
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              </div>
+              
+              {/* 3D edge effect */}
+              <div className={`absolute top-0 bottom-0 right-0 w-4 bg-gray-300 transform rotate-y-90 origin-right shadow-inner transition-all duration-500
+                ${isHovering ? 'opacity-100' : 'opacity-0'}`}>
+              </div>
             </div>
           </div>
           
           {/* Book details */}
           <div className="w-full md:w-2/3 lg:w-3/4">
-            <h1 className="text-4xl font-bold mb-2">{book.title}</h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-2 text-white">{book.title}</h1>
             <p className="text-xl text-white/80 mb-6">by {book.author}</p>
             
             <div className="flex flex-wrap gap-3 mb-6">
@@ -95,13 +134,16 @@ const BookDetailView = ({ book, onClose }) => {
             )}
             
             {book.notes && (
-              <div className="bg-white/10 rounded-lg p-6 mb-8">
-                <h2 className="text-xl font-bold mb-3">Your Notes</h2>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 mb-8 transform transition-transform duration-500 hover:scale-[1.01] hover:bg-white/15">
+                <h2 className="text-xl font-bold mb-3 flex items-center gap-2">
+                  <BookOpen size={20} />
+                  <span>Your Notes</span>
+                </h2>
                 <p className="text-white/90">{book.notes}</p>
               </div>
             )}
             
-            <div className="text-center md:text-left">
+            <div className="text-center md:text-left p-6 bg-white/5 backdrop-blur-sm rounded-lg">
               <p className="text-lg text-white/70 italic">
                 This is a placeholder for the full book detail view. 
                 More features coming soon!
