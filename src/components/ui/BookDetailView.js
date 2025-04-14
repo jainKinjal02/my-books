@@ -1,10 +1,13 @@
 // BookDetailView.js with teal-blue animated gradient background
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, BookOpen, Heart, Share2, Bookmark, Download } from 'lucide-react';
+import { ArrowLeft, BookOpen, Heart, Share2, Bookmark, Download, Quote, Camera, Plus, X } from 'lucide-react';
 
 const BookDetailView = ({ book, onClose }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
+  const [activeTab, setActiveTab] = useState('quotes'); // 'quotes' or 'photos'
+  const [showPhotoModal, setShowPhotoModal] = useState(false);
+  const [showQuoteModal, setShowQuoteModal] = useState(false);
 
   // Animation effect on component mount
   useEffect(() => {
@@ -31,6 +34,19 @@ const BookDetailView = ({ book, onClose }) => {
     
     return book.coverUrl || bookCovers[book.title] || bookCovers.default;
   };
+
+  // Mock data for quotes and photos - in a real app these would come from your backend
+  const sampleQuotes = book.quotes || [
+    { id: 1, text: "It is our choices that show what we truly are, far more than our abilities.", page: 333 },
+    { id: 2, text: "Words are, in my not-so-humble opinion, our most inexhaustible source of magic.", page: 427 },
+    { id: 3, text: "The truth is a beautiful and terrible thing, and should therefore be treated with great caution.", page: 298 }
+  ];
+
+  const samplePhotos = book.photos || [
+    { id: 1, url: "/images/quotes/IMG_9902.jpeg", caption: "Beautiful passage on page 63" },
+    { id: 2, url: "/images/quotes/IMG_9903.jpeg", caption: "those looking for love" },
+    { id: 3, url: "/images/quotes/IMG_9904.jpeg", caption: "My favorite scene described on page 156" }
+  ];
 
   // Make sure we have a book
   if (!book) return <div>No book selected</div>;
@@ -143,15 +159,209 @@ const BookDetailView = ({ book, onClose }) => {
               </div>
             )}
             
-            <div className="text-center md:text-left p-6 bg-white/5 backdrop-blur-sm rounded-lg">
+            {/* New Quotes & Photos Sections */}
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 mb-8 overflow-hidden">
+              {/* Tab Navigation */}
+              <div className="flex mb-6 border-b border-white/20">
+                <button
+                  className={`px-4 py-2 flex items-center gap-2 transition-colors ${
+                    activeTab === 'quotes' 
+                      ? 'text-white border-b-2 border-white font-semibold' 
+                      : 'text-white/60 hover:text-white'
+                  }`}
+                  onClick={() => setActiveTab('quotes')}
+                >
+                  <Quote size={18} />
+                  <span>Quote Collection</span>
+                </button>
+                <button
+                  className={`px-4 py-2 flex items-center gap-2 transition-colors ${
+                    activeTab === 'photos' 
+                      ? 'text-white border-b-2 border-white font-semibold' 
+                      : 'text-white/60 hover:text-white'
+                  }`}
+                  onClick={() => setActiveTab('photos')}
+                >
+                  <Camera size={18} />
+                  <span>Book Photos</span>
+                </button>
+              </div>
+              
+              {/* Tab Content */}
+              <div className="relative">
+                {/* Quotes Tab */}
+                <div className={`transition-all duration-300 ${
+                  activeTab === 'quotes' ? 'opacity-100 translate-y-0' : 'opacity-0 absolute translate-y-4 pointer-events-none'
+                }`}>
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-semibold text-white">Memorable Quotes</h3>
+                    <button 
+                      onClick={() => setShowQuoteModal(true)}
+                      className="bg-white/20 hover:bg-white/30 transition-colors text-white text-sm rounded-lg px-3 py-1 flex items-center gap-1"
+                    >
+                      <Plus size={16} />
+                      <span>Add Quote</span>
+                    </button>
+                  </div>
+                  
+                  {sampleQuotes.length > 0 ? (
+                    <div className="space-y-4">
+                      {sampleQuotes.map(quote => (
+                        <div key={quote.id} className="bg-white/5 rounded-lg p-4 hover:bg-white/10 transition-colors">
+                          <blockquote className="text-white/90 italic mb-2">"{quote.text}"</blockquote>
+                          <div className="text-sm text-white/60">Page {quote.page}</div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-white/70 text-center py-6">
+                      You haven't saved any quotes from this book yet.
+                    </p>
+                  )}
+                </div>
+                
+                {/* Photos Tab */}
+                <div className={`transition-all duration-300 ${
+                  activeTab === 'photos' ? 'opacity-100 translate-y-0' : 'opacity-0 absolute translate-y-4 pointer-events-none'
+                }`}>
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-semibold text-white">Book Photos</h3>
+                    <button 
+                      onClick={() => setShowPhotoModal(true)}
+                      className="bg-white/20 hover:bg-white/30 transition-colors text-white text-sm rounded-lg px-3 py-1 flex items-center gap-1"
+                    >
+                      <Plus size={16} />
+                      <span>Add Photo</span>
+                    </button>
+                  </div>
+                  
+                  {samplePhotos.length > 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                      {samplePhotos.map(photo => (
+                        <div key={photo.id} className="bg-white/5 rounded-lg overflow-hidden group hover:bg-white/10 transition-colors">
+                          <div className="aspect-video relative">
+                            <img 
+                              src={photo.url} 
+                              alt={photo.caption || "Book photo"} 
+                              className="w-full h-full object-cover"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                          </div>
+                          <div className="p-3">
+                            <p className="text-sm text-white/90">{photo.caption}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-white/70 text-center py-6">
+                      You haven't added any photos from this book yet.
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+            
+            {/* <div className="text-center md:text-left p-6 bg-white/5 backdrop-blur-sm rounded-lg">
               <p className="text-lg text-white/70 italic">
                 This is a placeholder for the full book detail view. 
                 More features coming soon!
               </p>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
+      
+      {/* Add Photo Modal */}
+      {showPhotoModal && (
+        <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
+          <div className="bg-gray-800 rounded-lg w-full max-w-lg overflow-hidden shadow-2xl">
+            <div className="flex justify-between items-center p-4 border-b border-gray-700">
+              <h3 className="text-lg font-semibold text-white">Add New Book Photo</h3>
+              <button 
+                onClick={() => setShowPhotoModal(false)}
+                className="text-gray-400 hover:text-white"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-6">
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-300 mb-2">Upload Photo</label>
+                <div className="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center hover:border-gray-400 transition-colors cursor-pointer">
+                  <Camera size={36} className="mx-auto text-gray-400 mb-2" />
+                  <p className="text-gray-400">Click to upload or drag and drop</p>
+                  <p className="text-xs text-gray-500 mt-1">PNG, JPG or WEBP (max. 5MB)</p>
+                </div>
+              </div>
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-300 mb-2">Caption</label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
+                  placeholder="What's this photo about?"
+                />
+              </div>
+              <div className="flex justify-end gap-3">
+                <button 
+                  onClick={() => setShowPhotoModal(false)}
+                  className="px-4 py-2 border border-gray-600 rounded-lg text-gray-300"
+                >
+                  Cancel
+                </button>
+                <button className="px-4 py-2 bg-blue-600 rounded-lg text-white">
+                  Add Photo
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Add Quote Modal */}
+      {showQuoteModal && (
+        <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
+          <div className="bg-gray-800 rounded-lg w-full max-w-lg overflow-hidden shadow-2xl">
+            <div className="flex justify-between items-center p-4 border-b border-gray-700">
+              <h3 className="text-lg font-semibold text-white">Add New Quote</h3>
+              <button 
+                onClick={() => setShowQuoteModal(false)}
+                className="text-gray-400 hover:text-white"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-6">
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-300 mb-2">Quote Text</label>
+                <textarea
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white h-32"
+                  placeholder="Type the quote here..."
+                ></textarea>
+              </div>
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-300 mb-2">Page Number</label>
+                <input
+                  type="number"
+                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
+                  placeholder="123"
+                />
+              </div>
+              <div className="flex justify-end gap-3">
+                <button 
+                  onClick={() => setShowQuoteModal(false)}
+                  className="px-4 py-2 border border-gray-600 rounded-lg text-gray-300"
+                >
+                  Cancel
+                </button>
+                <button className="px-4 py-2 bg-blue-600 rounded-lg text-white">
+                  Save Quote
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
