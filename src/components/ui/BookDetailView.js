@@ -117,7 +117,7 @@ const BookDetailView = ({ book, onClose }) => {
           
           {/* Book details */}
           <div className="w-full md:w-2/3 lg:w-3/4">
-            <h1 className="text-4xl md:text-5xl font-bold mb-2 text-white">{book.title}</h1>
+            <h1 className="book-title text-4xl md:text-5xl font-bold mb-2 text-white">{book.title}</h1>
             <p className="text-xl text-white/80 mb-6">by {book.author}</p>
             
             <div className="flex flex-wrap gap-3 mb-6">
