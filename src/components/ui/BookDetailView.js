@@ -1,6 +1,8 @@
-// BookDetailView.js with teal-blue animated gradient background
+// BookDetailView.js with revised layout and scrolling
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, BookOpen, Heart, Share2, Bookmark, Download, Quote, Camera, Plus, X } from 'lucide-react';
+// Import the ReadingProgress component
+import ReadingProgress from './ReadingProgress';
 
 const BookDetailView = ({ book, onClose }) => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -56,6 +58,72 @@ const BookDetailView = ({ book, onClose }) => {
       {/* Teal-Blue Animated Gradient Background */}
       <div className="fixed inset-0 z-0 teal-blue-gradient"></div>
       
+      {/* Custom styles for the title */}
+      <style jsx>{`
+        .book-title {
+          font-family: 'Playfair Display', serif;
+          text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+          letter-spacing: -0.02em;
+          line-height: 1.1;
+        }
+        
+        .book-author {
+          font-family: 'Literata', serif;
+          letter-spacing: 0.02em;
+        }
+        
+        .section-title {
+          color: #38bdf8; /* Lighter blue color for section titles */
+          text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        
+        /* Add this to your global CSS for the gradient background */
+        .teal-blue-gradient {
+          background: linear-gradient(-45deg, #134e5e, #1a2980, #26d0ce);
+          background-size: 400% 400%;
+          animation: gradient-animation 15s ease infinite;
+        }
+        
+        @keyframes gradient-animation {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        
+        /* Added for completion tracking animation */
+        .animate-pulse-slow {
+          animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 0.3;
+          }
+          50% {
+            opacity: 0.5;
+          }
+        }
+        
+        /* Custom scrollbar for content area */
+        .content-scroll::-webkit-scrollbar {
+          width: 6px;
+        }
+        
+        .content-scroll::-webkit-scrollbar-track {
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 10px;
+        }
+        
+        .content-scroll::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 10px;
+        }
+        
+        .content-scroll::-webkit-scrollbar-thumb:hover {
+          background: rgba(255, 255, 255, 0.3);
+        }
+      `}</style>
+      
       {/* Header with back button */}
       <div className="sticky top-0 z-40 backdrop-blur-md bg-black/30 text-white shadow-lg">
         <div className="container mx-auto px-6 py-4">
@@ -84,9 +152,10 @@ const BookDetailView = ({ book, onClose }) => {
         </div>
       </div>
       
-      {/* Basic book info - to be expanded later */}
-      <div className="container mx-auto px-6 py-8 relative z-10">
-        <div className="flex flex-col md:flex-row gap-8">
+      {/* Main content area with fixed and scrollable sections */}
+      <div className="container mx-auto px-6 py-8 relative z-10 h-[calc(100vh-76px)] flex flex-col">
+        {/* Fixed book info area */}
+        <div className="flex flex-col md:flex-row gap-8 mb-6">
           {/* Book cover with animation */}
           <div className="w-full md:w-1/3 lg:w-1/4 perspective-1000">
             <div 
@@ -115,10 +184,10 @@ const BookDetailView = ({ book, onClose }) => {
             </div>
           </div>
           
-          {/* Book details */}
+          {/* Book title and basic details (fixed) */}
           <div className="w-full md:w-2/3 lg:w-3/4">
             <h1 className="book-title text-4xl md:text-5xl font-bold mb-2 text-white">{book.title}</h1>
-            <p className="text-xl text-white/80 mb-6">by {book.author}</p>
+            <p className="book-author text-xl text-white/80 mb-6">by {book.author}</p>
             
             <div className="flex flex-wrap gap-3 mb-6">
               <span className="inline-block bg-yellow-400/80 text-black rounded-full px-3 py-1 text-sm font-semibold">
@@ -148,126 +217,130 @@ const BookDetailView = ({ book, onClose }) => {
                 ))}
               </div>
             )}
-            
-            {book.notes && (
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 mb-8 transform transition-transform duration-500 hover:scale-[1.01] hover:bg-white/15">
-                <h2 className="text-xl font-bold mb-3 flex items-center gap-2">
-                  <BookOpen size={20} />
-                  <span>Your Notes</span>
-                </h2>
-                <p className="text-white/90">{book.notes}</p>
-              </div>
-            )}
-            
-            {/* New Quotes & Photos Sections */}
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 mb-8 overflow-hidden">
-              {/* Tab Navigation */}
-              <div className="flex mb-6 border-b border-white/20">
-                <button
-                  className={`px-4 py-2 flex items-center gap-2 transition-colors ${
-                    activeTab === 'quotes' 
-                      ? 'text-white border-b-2 border-white font-semibold' 
-                      : 'text-white/60 hover:text-white'
-                  }`}
-                  onClick={() => setActiveTab('quotes')}
-                >
-                  <Quote size={18} />
-                  <span>Quote Collection</span>
-                </button>
-                <button
-                  className={`px-4 py-2 flex items-center gap-2 transition-colors ${
-                    activeTab === 'photos' 
-                      ? 'text-white border-b-2 border-white font-semibold' 
-                      : 'text-white/60 hover:text-white'
-                  }`}
-                  onClick={() => setActiveTab('photos')}
-                >
-                  <Camera size={18} />
-                  <span>Book Photos</span>
-                </button>
-              </div>
+          </div>
+        </div>
+        
+        {/* Scrollable content area */}
+        <div className="flex-grow overflow-hidden">
+          <div className="h-full overflow-y-auto content-scroll pr-2">
+            <div className="w-full md:w-2/3 lg:w-3/4 ml-auto">
+              {/* 1. Your Notes Section (first) */}
+              {book.notes && (
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 mb-8 transform transition-transform duration-500 hover:scale-[1.01] hover:bg-white/15">
+                  <h2 className="section-title text-xl font-bold mb-3 flex items-center gap-2">
+                    <BookOpen size={20} />
+                    <span>Your Notes</span>
+                  </h2>
+                  <p className="text-white/90">{book.notes}</p>
+                </div>
+              )}
               
-              {/* Tab Content */}
-              <div className="relative">
-                {/* Quotes Tab */}
-                <div className={`transition-all duration-300 ${
-                  activeTab === 'quotes' ? 'opacity-100 translate-y-0' : 'opacity-0 absolute translate-y-4 pointer-events-none'
-                }`}>
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-semibold text-white">Memorable Quotes</h3>
-                    <button 
-                      onClick={() => setShowQuoteModal(true)}
-                      className="bg-white/20 hover:bg-white/30 transition-colors text-white text-sm rounded-lg px-3 py-1 flex items-center gap-1"
-                    >
-                      <Plus size={16} />
-                      <span>Add Quote</span>
-                    </button>
-                  </div>
-                  
-                  {sampleQuotes.length > 0 ? (
-                    <div className="space-y-4">
-                      {sampleQuotes.map(quote => (
-                        <div key={quote.id} className="bg-white/5 rounded-lg p-4 hover:bg-white/10 transition-colors">
-                          <blockquote className="text-white/90 italic mb-2">"{quote.text}"</blockquote>
-                          <div className="text-sm text-white/60">Page {quote.page}</div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-white/70 text-center py-6">
-                      You haven't saved any quotes from this book yet.
-                    </p>
-                  )}
+              {/* 2. Quotes & Photos Sections (second) */}
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 mb-8 overflow-hidden">
+                {/* Tab Navigation */}
+                <div className="flex mb-6 border-b border-white/20">
+                  <button
+                    className={`px-4 py-2 flex items-center gap-2 transition-colors ${
+                      activeTab === 'quotes' 
+                        ? 'text-white border-b-2 border-white font-semibold' 
+                        : 'text-white/60 hover:text-white'
+                    }`}
+                    onClick={() => setActiveTab('quotes')}
+                  >
+                    <Quote size={18} />
+                    <span>Quote Collection</span>
+                  </button>
+                  <button
+                    className={`px-4 py-2 flex items-center gap-2 transition-colors ${
+                      activeTab === 'photos' 
+                        ? 'text-white border-b-2 border-white font-semibold' 
+                        : 'text-white/60 hover:text-white'
+                    }`}
+                    onClick={() => setActiveTab('photos')}
+                  >
+                    <Camera size={18} />
+                    <span>Book Photos</span>
+                  </button>
                 </div>
                 
-                {/* Photos Tab */}
-                <div className={`transition-all duration-300 ${
-                  activeTab === 'photos' ? 'opacity-100 translate-y-0' : 'opacity-0 absolute translate-y-4 pointer-events-none'
-                }`}>
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-semibold text-white">Book Photos</h3>
-                    <button 
-                      onClick={() => setShowPhotoModal(true)}
-                      className="bg-white/20 hover:bg-white/30 transition-colors text-white text-sm rounded-lg px-3 py-1 flex items-center gap-1"
-                    >
-                      <Plus size={16} />
-                      <span>Add Photo</span>
-                    </button>
+                {/* Tab Content */}
+                <div className="relative">
+                  {/* Quotes Tab */}
+                  <div className={`transition-all duration-300 ${
+                    activeTab === 'quotes' ? 'opacity-100 translate-y-0' : 'opacity-0 absolute translate-y-4 pointer-events-none'
+                  }`}>
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="section-title text-lg font-semibold">Memorable Quotes</h3>
+                      <button 
+                        onClick={() => setShowQuoteModal(true)}
+                        className="bg-white/20 hover:bg-white/30 transition-colors text-white text-sm rounded-lg px-3 py-1 flex items-center gap-1"
+                      >
+                        <Plus size={16} />
+                        <span>Add Quote</span>
+                      </button>
+                    </div>
+                    
+                    {sampleQuotes.length > 0 ? (
+                      <div className="space-y-4">
+                        {sampleQuotes.map(quote => (
+                          <div key={quote.id} className="bg-white/5 rounded-lg p-4 hover:bg-white/10 transition-colors">
+                            <blockquote className="text-white/90 italic mb-2">"{quote.text}"</blockquote>
+                            <div className="text-sm text-white/60">Page {quote.page}</div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-white/70 text-center py-6">
+                        You haven't saved any quotes from this book yet.
+                      </p>
+                    )}
                   </div>
                   
-                  {samplePhotos.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                      {samplePhotos.map(photo => (
-                        <div key={photo.id} className="bg-white/5 rounded-lg overflow-hidden group hover:bg-white/10 transition-colors">
-                          <div className="aspect-video relative">
-                            <img 
-                              src={photo.url} 
-                              alt={photo.caption || "Book photo"} 
-                              className="w-full h-full object-cover"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                          </div>
-                          <div className="p-3">
-                            <p className="text-sm text-white/90">{photo.caption}</p>
-                          </div>
-                        </div>
-                      ))}
+                  {/* Photos Tab */}
+                  <div className={`transition-all duration-300 ${
+                    activeTab === 'photos' ? 'opacity-100 translate-y-0' : 'opacity-0 absolute translate-y-4 pointer-events-none'
+                  }`}>
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="section-title text-lg font-semibold">Book Photos</h3>
+                      <button 
+                        onClick={() => setShowPhotoModal(true)}
+                        className="bg-white/20 hover:bg-white/30 transition-colors text-white text-sm rounded-lg px-3 py-1 flex items-center gap-1"
+                      >
+                        <Plus size={16} />
+                        <span>Add Photo</span>
+                      </button>
                     </div>
-                  ) : (
-                    <p className="text-white/70 text-center py-6">
-                      You haven't added any photos from this book yet.
-                    </p>
-                  )}
+                    
+                    {samplePhotos.length > 0 ? (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        {samplePhotos.map(photo => (
+                          <div key={photo.id} className="bg-white/5 rounded-lg overflow-hidden group hover:bg-white/10 transition-colors">
+                            <div className="aspect-video relative">
+                              <img 
+                                src={photo.url} 
+                                alt={photo.caption || "Book photo"} 
+                                className="w-full h-full object-cover"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            </div>
+                            <div className="p-3">
+                              <p className="text-sm text-white/90">{photo.caption}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-white/70 text-center py-6">
+                        You haven't added any photos from this book yet.
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
+              
+              {/* 3. Reading Progress Section (third/last) */}
+              <ReadingProgress book={book} />
             </div>
-            
-            {/* <div className="text-center md:text-left p-6 bg-white/5 backdrop-blur-sm rounded-lg">
-              <p className="text-lg text-white/70 italic">
-                This is a placeholder for the full book detail view. 
-                More features coming soon!
-              </p>
-            </div> */}
           </div>
         </div>
       </div>
